@@ -1,0 +1,1 @@
+Buenas, damas y caballeros. Este es mi proyecto de tesis. Escrito en el lenguaje más abominable de la historia de la humanidad (Python). Es un pequeño sistema que utiliza inteligencia artificial para detectar plagio y tal.
