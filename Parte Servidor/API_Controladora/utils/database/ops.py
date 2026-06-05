@@ -1,7 +1,7 @@
 """Little module for DataBase boot process"""
 
 from sqlmodel import create_engine, SQLModel
-from models import Usuario, Estudiante, Profesor, Reporte
+from utils.database.models import Usuario, Estudiante, Profesor, Reporte
 
 DB_URL = "mysql+pymysql://frost:CrimsonCC3327-0@localhost:3306/sistema_de_asistencia"
 
