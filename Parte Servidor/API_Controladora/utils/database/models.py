@@ -1,36 +1,40 @@
-"""Models for current solution"""
+"""Models for the ORM, nth attemp"""
 
-import sqlmodel
+from sqlmodel import SQLModel, Field, Relationship
 from typing import Optional
-from sqlmodel import SQLModel, Field 
-import datetime
+from datetime import date
 
 class Usuario(SQLModel, table=True):
-    """Main user class"""
-    __tablename__ = "usuarios"
-    id_usuario: Optional[int] = Field(default=None, primary_key=True)
+    """Clase de usuario básica"""
+    __tablename__ = "usuario"
+    id_usuario: Optional[int] = Field(primary_key=True, default=None)
     username: str = Field(unique=True)
-    password: str
-    grupo: str = Field(max_length=6, min_length=6)
+    password:str
+    salt:str
+    grupo:str
+    estudiante: "Estudiante"  = Relationship(back_populates="usuario", cascade_delete=True)
+    profesor: "Profesor" = Relationship(back_populates="usuario", cascade_delete=True)
 
-class Profesor(Usuario, table=True):
-    """Professor model class"""
-    __tablename__ = "profesores"
-    id_profesor: Optional[int] = Field(foreign_key="usuarios.id_usuario", primary_key=True)
-    nombre: str
-    departamento: str
+class Estudiante(SQLModel, table=True):
+    """Clase para el rol de estudiante"""
+    __tablename__ = "estudiante"
+    id_estudiante: Optional[int] = Field(default=None, foreign_key="usuario.id_usuario", primary_key=True)
+    nombre:str
+    facultad:str
+    usuario: Usuario = Relationship(back_populates="estudiante")
 
-class Estudiante(Usuario, table=True):
-    """Student model class"""
-    __tablename__ = "estudiantes"
-    id_estudiante: Optional[int] = Field(foreign_key="usuarios.id_usuario", primary_key=True)
-    nombre: str
-    facultad: str
+class Profesor(SQLModel, table=True):
+    """Clase para el rol de profesor"""
+    __tablename__ = "profesor"
+    id_profesor: Optional[int] = Field(default=None, foreign_key="usuario.id_usuario", primary_key=True)
+    nombre:str
+    departamento:str
+    usuario: Usuario = Relationship(back_populates="profesor")
 
 class Reporte(SQLModel, table=True):
-    """Report model class"""
-    __tablename__ = "reportes"
+    """Tabla para guardar los reportes"""
+    __tablename__ = "reporte"
     id_reporte: Optional[int] = Field(primary_key=True, default=None)
-    id_profesor: Optional[int] = Field(foreign_key="profesores.id_profesor")
-    contenido: str
-    fecha: datetime.date
+    id_profesor: Optional[int] = Field(foreign_key="profesor.id_profesor", default=None)
+    contenido:str
+    fecha:date
