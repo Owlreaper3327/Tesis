@@ -80,13 +80,13 @@ async def try_auth(username:str = Form(...), password:str = Form(...)):
         us = result.first()
 
         if us == None:
-            return False
+            return "No autorizado"
         else:
             if verify_password(password, us.salt, us.password):
                 token = compose_token(us)
                 return token
             else:
-                return False
+                return "No autorizado"
 
 
 @session_router.post("/register/prof")
