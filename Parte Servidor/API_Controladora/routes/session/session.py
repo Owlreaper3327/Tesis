@@ -155,3 +155,16 @@ async def register_student(username:str = Form(...),\
     
     return {"status": "successful",
             "message": "Estudiante registrado exitosamente"}
+
+@session_router.get("/checkuser/{username}")
+def check_username(username:str):
+
+    with Session(engine) as sesion:
+
+        stmt = select(Usuario).where(Usuario.username == username)
+        result = sesion.exec(stmt).one_or_none()
+
+        if result is None:
+            return {"valid_username": True}
+        else:
+            return {"valid_username": False}
