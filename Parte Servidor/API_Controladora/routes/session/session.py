@@ -1,9 +1,11 @@
 """Api router for session operations"""
-from fastapi import APIRouter, status, Response, HTTPException
+from fastapi import APIRouter, status, HTTPException
+from fastapi.responses import JSONResponse
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from utils.database.ops import engine
 from utils.database.models import Usuario, Estudiante, Profesor, Reporte
 from sqlmodel import Session, select, insert
-from fastapi import Form, Cookie
+from fastapi import Form, Cookie, Header
 from sqlalchemy.exc import SQLAlchemyError
 import hashlib
 import os
@@ -168,3 +170,17 @@ def check_username(username:str):
             return {"valid_username": True}
         else:
             return {"valid_username": False}
+
+@session_router.get("/checktoken")
+def check_token(token:str = Header(...)):
+
+    token_dec = token.split(" ")[1]
+    print(token_dec)
+    try: 
+        tok = jwt.decode(token_dec, clave, algorithms="HS256")
+
+        return JSONResponse(content={"token_valid": True}, status_code=200)
+
+    except jwt.PyJWTError as e:
+        print(e)
+        return JSONResponse(content={"token_valid": False}, status_code=401)

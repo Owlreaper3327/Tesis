@@ -4,6 +4,7 @@
 import streamlit as st
 import requests
 import jwt
+from streamlit_cookies_manager import EncryptedCookieManager
 
 if 'user' not in st.session_state:
     st.session_state.user = ""
@@ -16,6 +17,12 @@ if 'token' not in st.session_state:
 if 'grupo' not in st.session_state:
     st.session_state.grupo = ""
 
+cookies = EncryptedCookieManager(
+    password="cookie_39_Manager416"
+)
+
+if not cookies.ready():
+    st.stop()
 
 #functions go here
 def try_login(username, password):
@@ -78,7 +85,7 @@ if submit_btn:
             st.session_state["rol"] = decoded_tok["tipo"]
             st.session_state["autenticado"] = True
             st.session_state["grupo"] = decoded_tok["grupo"]
-            st.session_state["token"] = tok
+            cookies["auth_token"] = tok
 
             get_session()
         else:
