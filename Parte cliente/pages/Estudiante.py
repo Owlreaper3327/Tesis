@@ -16,25 +16,6 @@ com = False
 if not cookies.ready():
     st.stop()
 
-def is_session_established():
-
-    is_sesion = True
-
-    if not 'autenticado' in st.session_state:
-        is_sesion = False
-    if not 'rol' in st.session_state:
-        is_sesion = False
-    if not 'user' in st.session_state:
-        is_sesion = False
-    if not 'nombre' in st.session_state:
-        is_sesion = False
-    
-    if not is_sesion:
-        st.session_state.clear()
-    
-    return is_sesion
-
-
 def restore_state():
 
     token = cookies.get("auth_token")
@@ -65,13 +46,22 @@ def check_auth():
         if response.status_code != 200:
             close_session()
         
-        restore_state()
+        de_tok = jwt.decode(token, options={"verify_signature":False})
+        
+        if de_tok["tipo"] != "estudiante":
+            close_session()
+        else:
+            st.session_state.clear()
+            restore_state()
         pass
     
     except rq.exceptions.RequestException as e:
         
-        check = jwt.decode(token, options={"verify_signature": False})
-        if check["exp"] < time.time():
+        try:
+            check = jwt.decode(token, options={"verify_signature": False})
+            if check["exp"] < time.time():
+                close_session()
+        except jwt.exceptions.PyJWTError as ae:
             close_session()
 
 check_auth()

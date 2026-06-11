@@ -175,7 +175,6 @@ def check_username(username:str):
 def check_token(token:str = Header(...)):
 
     token_dec = token.split(" ")[1]
-    print(token_dec)
     try: 
         tok = jwt.decode(token_dec, clave, algorithms="HS256")
 
